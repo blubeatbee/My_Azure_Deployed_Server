@@ -1,15 +1,18 @@
-
 using FullSack.Data;
+using FullSack.Entities;
+using FullSack.Persistent;
+using FullSack.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using SemiWare.Utils;
 
 namespace FullSack
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
 			#region REGISTER SERVICES TO CONTAINER
 
 			var builder = WebApplication.CreateBuilder(args);
@@ -19,9 +22,35 @@ namespace FullSack
 				options.UseSqlServer(builder.Configuration.GetConnectionString("Cookbook"));
 			});
 
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+			builder.Services.AddIdentityApiEndpoints<User>(options =>
+			{
+				options.User.RequireUniqueEmail = true;
+				options.Password.RequiredLength = 6;
+				options.Password.RequireDigit = true;
+				options.Password.RequireLowercase = false;
+				options.Password.RequireUppercase = false;
+				options.Password.RequireNonAlphanumeric = true;
+			})
+				.AddRoles<IdentityRole>()
+				.AddDefaultTokenProviders()
+				.AddEntityFrameworkStores<FullSackDbContext>();
+
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("CorsDev", policy =>
+				{
+					policy.WithOrigins("")
+						.AllowAnyMethod()
+						.AllowAnyHeader()
+						.AllowCredentials();
+				});
+			});
+
+			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+			builder.Services.AddControllers();
+			// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+			builder.Services.AddOpenApi();
 
 			#endregion
 
@@ -40,25 +69,33 @@ namespace FullSack
 					retryMessage: "Database is not ready to migrate yet. Retrying...");
 			}
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
+			// Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
+			{
+				app.MapOpenApi();
 				app.MapScalarApiReference();
-            }
+			}
 
-            app.UseHttpsRedirection();
+			app.UseHttpsRedirection();
+
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseCors("CorsDev");
+			}
 
 			app.UseAuthentication();
 
-            app.UseAuthorization();
+			app.UseAuthorization();
 
+			app.MapIdentityApi<User>();
 
-            app.MapControllers();
+			var api = app.MapGroup("api/v1");
+
+			api.MapControllers();
 
 			#endregion
 
 			app.Run();
-        }
-    }
+		}
+	}
 }
