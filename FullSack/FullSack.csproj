@@ -22,4 +22,14 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.17.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="SemiWare">
+      <HintPath>..\..\..\..\..\..\..\Workspace\DotNet\Libraries\Semiware\obj\Release\net8.0\SemiWare.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y /d &quot;..\..\..\..\..\..\..\Workspace\DotNet\Libraries\Semiware\obj\Release\net8.0\SemiWare.dll&quot; &quot;$(TargetDir)&quot;" />
+  </Target>
+
 </Project>

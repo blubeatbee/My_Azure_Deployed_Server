@@ -2,6 +2,7 @@
 using FullSack.Data;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using SemiWare.Utils;
 
 namespace FullSack
 {
@@ -26,7 +27,18 @@ namespace FullSack
 
 
 			#region ADD MIDDLEWARES
+
 			var app = builder.Build();
+
+			using (var scope = app.Services.CreateScope())
+			{
+				var context = scope.ServiceProvider.GetRequiredService<FullSackDbContext>();
+				Attempt.ToDo(
+					action: context.Database.Migrate,
+					interval: TimeSpan.FromSeconds(2),
+					maxAttempts: 10,
+					retryMessage: "Database is not ready to migrate yet. Retrying...");
+			}
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
