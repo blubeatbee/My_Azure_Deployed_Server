@@ -10,7 +10,7 @@ namespace FullSack.Persistent
 		IRepository<Keyword> KeywordRepo { get; }
 		IRepository<KeywordCategory> KeywordCategoryRepo { get; }
 		IRepository<KeywordRecipe> KeywordRecipeRepo { get; }
-		IRepository<Recipe> RecipeRepo { get; }
+		IRecipeRepository RecipeRepo { get; }
 
 		Task<int> SaveAsync();
 	}
