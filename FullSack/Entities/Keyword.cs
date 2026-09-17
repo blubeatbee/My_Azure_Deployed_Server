@@ -20,5 +20,6 @@ namespace FullSack.Entities
 		public string Description { get; set; } = null!;
 
 		public virtual KeywordCategory KeywordCategoryNavProp { get; set; } = null!;
+		public virtual ICollection<KeywordRecipe> KeywordRecipeNavProp { get; set; } = new List<KeywordRecipe>();
 	}
 }

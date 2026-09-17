@@ -33,5 +33,6 @@ namespace FullSack.Entities
 		public virtual User? UserNavProp { get; set; }
 		public virtual ICollection<Ingredient> IngredientNavProp { get; set; } = new List<Ingredient>();
 		public virtual ICollection<Instruction> InstructionNavProp { get; set; } = new List<Instruction>();
+		public virtual ICollection<KeywordRecipe> KeywordRecipeNavProp { get; set; } = new List<KeywordRecipe>();
 	}
 }
