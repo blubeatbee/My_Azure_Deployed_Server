@@ -14,9 +14,9 @@ namespace FullSack
 	{
 		public static void Main(string[] args)
 		{
-			#region REGISTER SERVICES TO CONTAINER
-
 			var builder = WebApplication.CreateBuilder(args);
+
+			#region REGISTER SERVICES TO CONTAINER
 
 			builder.Services.AddDbContext<FullSackDbContext>(options =>
 			{
@@ -56,14 +56,15 @@ namespace FullSack
 
 			#endregion
 
+			var app = builder.Build();
 
 			#region ADD MIDDLEWARES
-
-			var app = builder.Build();
 
 			using (var scope = app.Services.CreateScope())
 			{
 				var context = scope.ServiceProvider.GetRequiredService<FullSackDbContext>();
+				// Attempts to apply any pending migrations
+				// See https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying?tabs=dotnet-core-cli#migration-locking
 				Attempt.ToDo(
 					action: context.Database.Migrate,
 					interval: TimeSpan.FromSeconds(2),
@@ -91,9 +92,7 @@ namespace FullSack
 
 			app.MapIdentityApi<User>();
 
-			var api = app.MapGroup("api/v1");
-
-			api.MapControllers();
+			app.MapControllers();
 
 			#endregion
 
