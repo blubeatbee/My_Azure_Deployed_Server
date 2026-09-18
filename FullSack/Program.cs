@@ -2,6 +2,7 @@ using FullSack.Data;
 using FullSack.Entities;
 using FullSack.Persistent;
 using FullSack.Repositories;
+using FullSack.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -47,6 +48,7 @@ namespace FullSack
 			});
 
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+			builder.Services.AddScoped<IRecipeService, RecipeService>();
 
 			builder.Services.AddControllers();
 			// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
