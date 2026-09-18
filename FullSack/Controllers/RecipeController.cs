@@ -1,5 +1,9 @@
+using FullSack.DTO.RecipeGet;
+using FullSack.DTO.RecipePut;
+using FullSack.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FullSack.Controllers
 {
@@ -7,18 +11,31 @@ namespace FullSack.Controllers
 	[Route("recipes/")]
 	public class RecipeController : ControllerBase
 	{
+		private readonly IRecipeService recipeService;
+
+		public RecipeController(IRecipeService recipeService)
+		{
+			ArgumentNullException.ThrowIfNull(recipeService);
+			this.recipeService = recipeService;
+		}
+
 		[HttpGet("search")]
-		public async Task<IActionResult> GetRecipeCatalogue(
+		public async Task<ActionResult<IList<RecipePageDTO>>> GetRecipeCatalogue(
 			[FromQuery(Name = "page")] int pageIndex,
 			[FromQuery(Name = "size")] int pageSize)
 		{
 			try
 			{
-				return Ok();
+				var result = await this.recipeService.GetRecipesAsListAsync(pageIndex, pageSize);
+				return Ok(result);
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex);
+				return StatusCode(500, ex);
 			}
 		}
 
@@ -28,55 +45,87 @@ namespace FullSack.Controllers
 		{
 			try
 			{
-				return Ok();
+				var result = this.recipeService.GetRecipeBySlugAsync(slug);
+				return Ok(result);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex);
+				return StatusCode(500, ex);
 			}
 		}
 
 		[Authorize]
 		[HttpPost]
-		public async Task<IActionResult> PostRecipe()
+		public async Task<ActionResult<RecipePageDTO>> PostRecipe([FromBody] RecipePutDTO newRecipe)
 		{
 			try
 			{
-				return Created();
+				var result = await this.recipeService.AddRecipeAsync(newRecipe);
+				return CreatedAtAction(nameof(GetRecipePageContent), new { id = result.RecipeId }, result);
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex);
+			}
+			catch (DbUpdateException ex)
+			{
+				return Conflict(ex);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex);
+				return StatusCode(500, ex);
 			}
 		}
 
 		[Authorize]
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutRecipe(
-			[FromRoute] string id)
+		public async Task<ActionResult<RecipePageDTO>> PutRecipe(
+			[FromRoute] string id,
+			[FromBody] RecipePutDTO updatedRecipe)
 		{
 			try
 			{
-				return Ok();
+				var result = await this.recipeService.UpdateRecipeByIdAsync(id, updatedRecipe);
+				return Ok(result);
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex);
+			}
+			catch (DbUpdateException ex)
+			{
+				return Conflict(ex);
 			}
 			catch (Exception ex)
 			{
-				return NotFound(ex);
+				return StatusCode(500, ex);
 			}
 		}
 
 		[Authorize]
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteRecipe(
-			[FromRoute] string id)
+		public async Task<IActionResult> DeleteRecipe([FromRoute] string id)
 		{
 			try
 			{
+				await this.recipeService.RemoveRecipeByIdAsync(id);
 				return Ok();
+			}
+			catch (ArgumentException ex)
+			{
+				return NotFound(ex);
+			}
+			catch (DbUpdateException ex)
+			{
+				return Conflict(ex);
 			}
 			catch (Exception ex)
 			{
-				return NotFound(ex);
+				return StatusCode(500, ex);
 			}
 		}
 	}
