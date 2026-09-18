@@ -1,9 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
 namespace FullSack.Entities
 {
+	[Index(nameof(Slug), IsUnique = true)]
 	public class Recipe
 	{
 		[Key]
