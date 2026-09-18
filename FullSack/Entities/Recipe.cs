@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace FullSack.Entities
 {
@@ -19,7 +20,24 @@ namespace FullSack.Entities
 
 		[Required]
 		[StringLength(Constants.TextLengthMedium)]
-		public string Slug { get; set; } = null!;
+		public string Slug
+		{
+			get;
+			set
+			{
+				if (string.IsNullOrWhiteSpace(value))
+				{
+					throw new ArgumentNullException(value);
+				}
+				field = value.ToLower(CultureInfo.InvariantCulture)
+					.Trim()
+					.Replace(" ", "-")
+					+ "-"
+					+ DateTime.UtcNow.ToString(
+						Constants.SlugFormatAppendix,
+						CultureInfo.InvariantCulture);
+			}
+		} = null!;
 
 		[StringLength(Constants.TextLengthLong)]
 		public string? Description { get; set; }

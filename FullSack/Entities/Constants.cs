@@ -24,6 +24,8 @@ namespace FullSack.Entities
 
 		public const int Zero = 0;
 
+		public const string SlugFormatAppendix = "ssffyy";
+
 		public const string SqlDateTime = "DATETIME2";
 		public const string SqlDecimal = "DECIMAL(10, 2)";
 		public const string SqlGuid = "NVARCHAR(450)";
