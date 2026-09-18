@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FullSack.Data
 {
-	public class FullSackDbContext : IdentityDbContext
+	public class FullSackDbContext : IdentityDbContext<User>
 	{
-		public FullSackDbContext(DbContextOptions options) : base(options)
+		public FullSackDbContext(DbContextOptions<FullSackDbContext> options) : base(options)
 		{
 		}
 

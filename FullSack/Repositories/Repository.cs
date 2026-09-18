@@ -1,3 +1,4 @@
+using FullSack.Entities;
 using FullSack.Persistent;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -7,10 +8,10 @@ namespace FullSack.Repositories
 {
 	public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 	{
-		protected IdentityDbContext Context { get; private set; }
+		protected IdentityDbContext<User> Context { get; private set; }
 		protected DbSet<TEntity> DbSet { get; set; }
 
-		public Repository(IdentityDbContext context)
+		public Repository(IdentityDbContext<User> context)
 		{
 			this.Context = context;
 			this.DbSet = this.Context.Set<TEntity>();

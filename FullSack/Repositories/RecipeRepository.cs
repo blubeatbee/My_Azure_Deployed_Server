@@ -8,7 +8,7 @@ namespace FullSack.Repositories
 {
 	public class RecipeRepository : Repository<Recipe>, IRecipeRepository
 	{
-		public RecipeRepository(IdentityDbContext context) : base(context)
+		public RecipeRepository(IdentityDbContext<User> context) : base(context)
 		{
 		}
 
