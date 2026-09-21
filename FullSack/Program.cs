@@ -1,5 +1,6 @@
 using FullSack.Data;
 using FullSack.Entities;
+using FullSack.Extensions;
 using FullSack.Persistent;
 using FullSack.Repositories;
 using FullSack.Services;
@@ -37,7 +38,7 @@ namespace FullSack
 			{
 				options.AddPolicy("CorsDev", policy =>
 				{
-					policy.WithOrigins("")
+					policy.WithOrigins(builder.Configuration.GetAllowedOrigin("ClientUrl1")!)
 						.AllowAnyMethod()
 						.AllowAnyHeader()
 						.AllowCredentials();
