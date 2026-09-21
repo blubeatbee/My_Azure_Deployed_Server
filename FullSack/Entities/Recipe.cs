@@ -1,8 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace FullSack.Entities
 {
+	[Index(nameof(Slug), IsUnique = true)]
 	public class Recipe
 	{
 		[Key]
@@ -19,7 +22,24 @@ namespace FullSack.Entities
 
 		[Required]
 		[StringLength(Constants.TextLengthMedium)]
-		public string Slug { get; set; } = null!;
+		public string Slug
+		{
+			get;
+			set
+			{
+				if (string.IsNullOrWhiteSpace(value))
+				{
+					throw new ArgumentNullException(value);
+				}
+				field = value.ToLower(CultureInfo.InvariantCulture)
+					.Trim()
+					.Replace(" ", "-")
+					+ "-"
+					+ DateTime.UtcNow.ToString(
+						Constants.SlugFormatAppendix,
+						CultureInfo.InvariantCulture);
+			}
+		} = null!;
 
 		[StringLength(Constants.TextLengthLong)]
 		public string? Description { get; set; }
@@ -33,5 +53,6 @@ namespace FullSack.Entities
 		public virtual User? UserNavProp { get; set; }
 		public virtual ICollection<Ingredient> IngredientNavProp { get; set; } = new List<Ingredient>();
 		public virtual ICollection<Instruction> InstructionNavProp { get; set; } = new List<Instruction>();
+		public virtual ICollection<KeywordRecipe> KeywordRecipeNavProp { get; set; } = new List<KeywordRecipe>();
 	}
 }

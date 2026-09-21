@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FullSack.Entities
 {
+	[Index(nameof(Category), IsUnique = true)]
+	[Index(nameof(Symbol), IsUnique = true)]
 	public class Measurement
 	{
 		[Key]

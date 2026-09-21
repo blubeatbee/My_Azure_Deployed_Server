@@ -18,6 +18,10 @@ namespace FullSack.Entities
 		[StringLength(Constants.TextLengthLong)]
 		public string Description { get; set; } = null!;
 
+		[Required]
+		[Range(Constants.ByteMinRange, Constants.ByteMaxRange)]
+		public byte Position { get; set; }
+
 		public virtual Recipe RecipeNavProp { get; set; } = null!;
 	}
 }

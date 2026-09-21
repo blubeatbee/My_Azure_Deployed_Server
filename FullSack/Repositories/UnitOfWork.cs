@@ -17,7 +17,7 @@ namespace FullSack.Repositories
 			KeywordRepo = new Repository<Keyword>(this.context);
 			KeywordCategoryRepo = new Repository<KeywordCategory>(this.context);
 			KeywordRecipeRepo = new Repository<KeywordRecipe>(this.context);
-			RecipeRepo = new Repository<Recipe>(this.context);
+			RecipeRepo = new RecipeRepository(this.context);
 		}
 
 		public IRepository<Ingredient> IngredientRepo { get; private set; }
@@ -26,7 +26,7 @@ namespace FullSack.Repositories
 		public IRepository<Keyword> KeywordRepo { get; private set; }
 		public IRepository<KeywordCategory> KeywordCategoryRepo { get; private set; }
 		public IRepository<KeywordRecipe> KeywordRecipeRepo { get; private set; }
-		public IRepository<Recipe> RecipeRepo { get; private set; }
+		public IRecipeRepository RecipeRepo { get; private set; }
 
 		public async Task<int> SaveAsync()
 		{

@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FullSack.Entities
 {
+	[Index(nameof(Title), IsUnique = true)]
 	public class Keyword
 	{
 		[Key]
@@ -20,5 +22,6 @@ namespace FullSack.Entities
 		public string Description { get; set; } = null!;
 
 		public virtual KeywordCategory KeywordCategoryNavProp { get; set; } = null!;
+		public virtual ICollection<KeywordRecipe> KeywordRecipeNavProp { get; set; } = new List<KeywordRecipe>();
 	}
 }

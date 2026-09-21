@@ -2,6 +2,7 @@ using FullSack.Data;
 using FullSack.Entities;
 using FullSack.Persistent;
 using FullSack.Repositories;
+using FullSack.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -11,16 +12,13 @@ namespace FullSack
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
-			#region REGISTER SERVICES TO CONTAINER
-
 			var builder = WebApplication.CreateBuilder(args);
 
-			builder.Services.AddDbContext<FullSackDbContext>(options =>
-			{
-				options.UseSqlServer(builder.Configuration.GetConnectionString("Cookbook"));
-			});
+			#region REGISTER SERVICES TO CONTAINER
+
+			builder.Services.AddDbContext<FullSackDbContext>();
 
 			builder.Services.AddIdentityApiEndpoints<User>(options =>
 			{
@@ -47,6 +45,7 @@ namespace FullSack
 			});
 
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+			builder.Services.AddScoped<IRecipeService, RecipeService>();
 
 			builder.Services.AddControllers();
 			// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -54,14 +53,15 @@ namespace FullSack
 
 			#endregion
 
+			var app = builder.Build();
 
 			#region ADD MIDDLEWARES
-
-			var app = builder.Build();
 
 			using (var scope = app.Services.CreateScope())
 			{
 				var context = scope.ServiceProvider.GetRequiredService<FullSackDbContext>();
+				// Attempts to apply any pending migrations
+				// See https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying?tabs=dotnet-core-cli#migration-locking
 				Attempt.ToDo(
 					action: context.Database.Migrate,
 					interval: TimeSpan.FromSeconds(2),
@@ -74,6 +74,7 @@ namespace FullSack
 			{
 				app.MapOpenApi();
 				app.MapScalarApiReference();
+				await app.SeedRolesAndUsersAsync(app.Services.GetRequiredService<IConfiguration>());
 			}
 
 			app.UseHttpsRedirection();
@@ -89,9 +90,7 @@ namespace FullSack
 
 			app.MapIdentityApi<User>();
 
-			var api = app.MapGroup("api/v1");
-
-			api.MapControllers();
+			app.MapControllers();
 
 			#endregion
 
