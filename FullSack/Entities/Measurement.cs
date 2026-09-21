@@ -18,6 +18,9 @@ namespace FullSack.Entities
 		[StringLength(Constants.MeasurementSymbol)]
 		public string Symbol { get; set; } = null!;
 
+		[ConcurrencyCheck]
+		public string? ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+
 		public virtual ICollection<Ingredient> IngredientNavProp { get; set; } = new List<Ingredient>();
 	}
 }

@@ -30,6 +30,9 @@ namespace FullSack.Entities
 		[ForeignKey(nameof(MeasurementNavProp))]
 		public int MeasurementId { get; set; }
 
+		[ConcurrencyCheck]
+		public string? ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+
 		public virtual Recipe RecipeNavProp { get; set; } = null!;
 		public virtual Measurement MeasurementNavProp { get; set; } = null!;
 	}

@@ -15,6 +15,9 @@ namespace FullSack.Entities
 		[StringLength(Constants.TextLengthShort)]
 		public string Title { get; set; } = null!;
 
+		[ConcurrencyCheck]
+		public string? ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+
 		public virtual ICollection<Keyword> KeywordNavProp { get; set; } = new List<Keyword>();
 	}
 }

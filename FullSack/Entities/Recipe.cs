@@ -50,6 +50,9 @@ namespace FullSack.Entities
 		[Required]
 		public DateTime DateUpdated { get; set; }
 
+		[ConcurrencyCheck]
+		public string? ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+
 		public virtual User? UserNavProp { get; set; }
 		public virtual ICollection<Ingredient> IngredientNavProp { get; set; } = new List<Ingredient>();
 		public virtual ICollection<Instruction> InstructionNavProp { get; set; } = new List<Instruction>();

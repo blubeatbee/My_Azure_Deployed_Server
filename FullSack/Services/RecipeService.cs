@@ -225,6 +225,7 @@ namespace FullSack.Services
 			recipe.Description = updatedRecipe.Description;
 			recipe.DateCreated = updatedRecipe.DateCreated;
 			recipe.DateUpdated = DateTime.UtcNow;
+			recipe.ConcurrencyStamp = Guid.NewGuid().ToString();
 
 			this.workUnit.RecipeRepo.Update(recipe);
 
@@ -238,6 +239,7 @@ namespace FullSack.Services
 				ingredient.Position = updatedIngredient.Position;
 				ingredient.MeasurementId = updatedIngredient.MeasurementId;
 				ingredient.MeasurementValue = updatedIngredient.MeasurementValue;
+				ingredient.ConcurrencyStamp = Guid.NewGuid().ToString();
 
 				this.workUnit.IngredientRepo.Update(ingredient);
 			}
@@ -249,6 +251,7 @@ namespace FullSack.Services
 				instruction.RecipeId = id;
 				instruction.Description = updatedInstruction.Description;
 				instruction.Position = updatedInstruction.Position;
+				instruction.ConcurrencyStamp = Guid.NewGuid().ToString();
 
 				this.workUnit.InstructionRepo.Update(instruction);
 			}
@@ -269,6 +272,7 @@ namespace FullSack.Services
 		{
 			var recipe = await this.workUnit.RecipeRepo.GetByIdAsync(id)
 				?? throw new ArgumentNullException(id);
+			recipe.ConcurrencyStamp = Guid.NewGuid().ToString();
 			this.workUnit.RecipeRepo.Remove(recipe);
 			_ = await this.workUnit.SaveAsync();
 		}

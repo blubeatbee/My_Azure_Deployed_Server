@@ -22,6 +22,9 @@ namespace FullSack.Entities
 		[Range(Constants.ByteMinRange, Constants.ByteMaxRange)]
 		public byte Position { get; set; }
 
+		[ConcurrencyCheck]
+		public string? ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+
 		public virtual Recipe RecipeNavProp { get; set; } = null!;
 	}
 }
