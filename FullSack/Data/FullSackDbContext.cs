@@ -6,9 +6,13 @@ namespace FullSack.Data
 {
 	public class FullSackDbContext : IdentityDbContext<User>
 	{
-		public FullSackDbContext(DbContextOptions<FullSackDbContext> options) : base(options)
+		public FullSackDbContext(DbContextOptions<FullSackDbContext> options, IConfiguration configuration)
+			: base(options)
 		{
+			this.Configuration = configuration;
 		}
+
+		public IConfiguration Configuration { get; private set; }
 
 		public virtual DbSet<Ingredient> Ingredients {get; set; }
 		public virtual DbSet<Instruction> Instructions {get; set; }
@@ -19,7 +23,8 @@ namespace FullSack.Data
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			base.OnConfiguring(optionsBuilder);
+			optionsBuilder.UseSqlServer(Configuration.GetConnectionString("Cookbook"));
+			// base.OnConfiguring(optionsBuilder);
 		}
 
 		protected override void OnModelCreating(ModelBuilder builder)

@@ -18,10 +18,7 @@ namespace FullSack
 
 			#region REGISTER SERVICES TO CONTAINER
 
-			builder.Services.AddDbContext<FullSackDbContext>(options =>
-			{
-				options.UseSqlServer(builder.Configuration.GetConnectionString("Cookbook"));
-			});
+			builder.Services.AddDbContext<FullSackDbContext>();
 
 			builder.Services.AddIdentityApiEndpoints<User>(options =>
 			{
