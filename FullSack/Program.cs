@@ -74,6 +74,7 @@ namespace FullSack
 			{
 				app.MapOpenApi();
 				app.MapScalarApiReference();
+				await app.SeedRolesAndUsersAsync(app.Services.GetRequiredService<IConfiguration>());
 			}
 
 			app.UseHttpsRedirection();
