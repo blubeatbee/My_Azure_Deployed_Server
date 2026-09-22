@@ -16,7 +16,11 @@ trim_trailing_whitespace = true
 
 # File-specific tweaks
 
-[*.{json,json5,webmanifest,yml,yaml,xml,config,props,targets}]
+[*.{json,json5,webmanifest,xml,config,props,targets}]
+indent_size = 2
+
+[*.{yml,yaml}]
+end_of_line = lf
 indent_size = 2
 
 [*.{md,mdx}]
