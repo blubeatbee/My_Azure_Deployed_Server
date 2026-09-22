@@ -1,0 +1,16 @@
+# Github Actions policy that prevents non-dev branches from performing a successful Pull Request.
+
+name: PR protection
+
+on:
+  pull_request:
+
+jobs:
+  check_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR protection
+        if: github.base_ref == 'main' && github.head_ref != 'dev'
+        run: |
+          echo "ERROR: You can only merge to main branch from dev branch."
+          exit 1
